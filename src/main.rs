@@ -56,7 +56,6 @@ fn generate_frame(width: u32, height: u32, middle_x: f64, middle_y: f64, zoom: f
             pixel[0] = colored[0];
             pixel[1] = colored[1];
             pixel[2] = colored[2];
-
         });
 
     println!(
@@ -66,7 +65,7 @@ fn generate_frame(width: u32, height: u32, middle_x: f64, middle_y: f64, zoom: f
 
     spawn(move || {
         let save_start_time = Instant::now();
-        img.save(format!("frames/mandelbrot-{}.png", step)).unwrap();
+        img.save(format!("frames/mandelbrot-{}.webp", step)).unwrap();
         println!("Saved in {}ms", save_start_time.elapsed().as_millis());
     });
 }
@@ -79,21 +78,18 @@ fn main() {
     let middle_x = -1.5;
     let middle_y = -0.0;
     let start_zoom = 1.0;
-    let end_zoom = 1_000_000.0;
+    let end_zoom = 1_000_000_000_000.0;
 
-    let steps = 600;
-
+    let steps = 6000;
 
     for i in 0..steps {
         println!("Generating frame {}/{}", i, steps);
 
-        let t = i as f64 / steps as f64; 
-        let zoom = start_zoom + (end_zoom - start_zoom) * t.powf(4.0 + (steps as f64 / 1000.0));
-    
+        let t = i as f64 / steps as f64;
+        let zoom = start_zoom + (end_zoom - start_zoom) * t.powf(2.0 + (steps as f64 / 100.0));
+
         generate_frame(width, height, middle_x, middle_y, zoom, i);
     }
-
-    
 }
 
 fn colorize(n: u32) -> Rgb<u8> {
@@ -116,13 +112,15 @@ fn colorize(n: u32) -> Rgb<u8> {
         15 => [106, 52, 3],
         _ => [0, 0, 0],
     };
+
+
     Rgb(rgb)
 }
 
 fn mandelbrot(c: Complex) -> u32 {
     let mut z = Complex::new(0.0, 0.0);
     let mut n: u32 = 0;
-    while z.abs() <= 4.0 && n < 200 {
+    while z.abs() <= 4.0 && n < 256 {
         z = z.mul(&z).add(&c);
         n += 1;
     }
