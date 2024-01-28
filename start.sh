@@ -1,0 +1,1 @@
+cargo run --release && ffmpeg -r 30 -f image2 -s 1920x1080 -i frames/mandelbrot-%d.png -vcodec libx264 -y -crf 25 -pix_fmt yuv420p output.mp4
